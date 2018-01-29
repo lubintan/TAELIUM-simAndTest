@@ -14,7 +14,7 @@ PASSWORD = None
 class whatever(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(10)
         self.base_url = URL
         self.verificationErrors = []
         self.accept_next_alert = True

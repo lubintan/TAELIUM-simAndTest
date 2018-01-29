@@ -14,7 +14,7 @@ ACCT = None
 class SendTx(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
+        self.driver.implicitly_wait(10)
         self.base_url = URL
         self.verificationErrors = []
         self.accept_next_alert = True
@@ -51,7 +51,7 @@ class SendTx(unittest.TestCase):
         # driver.find_element_by_id("send_money_amount").clear()
         driver.find_element_by_id("send_money_amount").send_keys(str(amountToSend))
         # driver.find_element_by_id("send_money_fee").clear()
-        driver.find_element_by_id("send_money_fee").send_keys("1")
+        # driver.find_element_by_id("send_money_fee").send_keys("2")
         # driver.find_element_by_id("send_money_password").clear()
         driver.find_element_by_id("send_money_password").send_keys(PASSWORD)
 
@@ -59,7 +59,7 @@ class SendTx(unittest.TestCase):
         if amountToSend > 100000:
             driver.find_element_by_css_selector("div.modal-footer > button.btn.btn-primary").click()
 
-        # time.sleep(10)
+        time.sleep(1)
     
     def is_element_present(self, how, what):
         try: self.driver.find_element(by=how, value=what)
