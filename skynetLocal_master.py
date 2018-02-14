@@ -67,37 +67,32 @@ if __name__ == '__main__':
 
 
     time.sleep(2) #for everything to load
-    # forever forgers
-    # forge(Accounts[9])
-    # forge(Accounts[8])
 
-    # setup
-    forge(Accounts[0])
-    forge(Accounts[1])
-    forge(Accounts[2])
-    forge(Accounts[3])
-    forge(Accounts[4])
-    forge(Accounts[5])
-    forge(Accounts[6])
-    forge(Accounts[7])
-    forge(Accounts[8])
-    forge(Accounts[9])
+    accts = [0,1,2,3,4,5,6,7,8,9]
+    numForgers = 3
+    forgingAccts = []
+
+    for i in range(numForgers):
+        thisAcct = random.choice(accts)
+        forgingAccts.append(thisAcct)
+        accts.remove(thisAcct)
+
 
     while(True):
         time.sleep(5)
         action = random.randint(0,10)
 
-        if action <= 3:
-            acctNum = random.randint(0, 9)
+        if action <= 2: #0,1,2
+            acctNum = random.choice(forgingAccts)
             forge(Accounts[acctNum])
             print 'Account ', Accounts[acctNum][0], 'started forging on Node ', Accounts[acctNum][3]
 
-        elif ((action ==4) or (action ==5)) :
-            acctNum = random.randint(0, 9)
+        elif ((action >=3) and (action <=5)) : #3,4,5
+            acctNum = random.choice(forgingAccts)
             unforge(Accounts[acctNum])
             print 'Account ', Accounts[acctNum][0], 'stopped forging on Node ', Accounts[acctNum][3]
 
-        elif ((action >=6) and (action <=8)):
+        elif ((action >=6) and (action <=10)):
             acctNum = random.randint(0, 9)
             recipient = random.randint(0, 9)
             while (acctNum == recipient):
