@@ -20,7 +20,25 @@ ACCOUNTS = [['TAEL-VXVQ-APCC-UHDD-7A3ZX','password1'],
           ['TAEL-PQMA-6CS2-XU9J-AWZY7','password7'],
           ['TAEL-N7LT-FNZN-A9QJ-GPXMA','password8'],
           ['TAEL-KXHS-8A7R-5FF5-5PFS6','password9'],
-          ['TAEL-DLMP-5UTD-LDQQ-8929X','password10']]
+          ['TAEL-DLMP-5UTD-LDQQ-8929X','password10'],
+        ['TAEL-7WM6-25HQ-PWRD-6JYL5', 'password11'],
+        ['TAEL-2F46-CUYL-GEQ9-HAV4S', 'password12'],
+        ['TAEL-MVSV-VJT9-ZF66-BD69Q', 'password13'],
+        ['TAEL-YB5W-5BC5-Y8BR-FSAHE', 'password14'],
+        ['TAEL-6J4A-KQPT-WKUU-8UCVZ', 'password15'],
+        ['TAEL-KXFC-KDK9-9QZZ-F62B6', 'password16'],
+        ['TAEL-YPYD-HL88-3MAB-BBZ5Y', 'password17'],
+        ['TAEL-PHRR-B6MS-K68F-B787N', 'password18'],
+        ['TAEL-C2KW-R47L-UL46-FP4V4', 'password19'],
+        ['TAEL-GG8F-KX2Y-EKJH-B5R7A', 'password20']]
+
+RED_QUEEN = '44333'
+ALPHA = '43255'
+DEFAULT = '43250'
+PORT = RED_QUEEN
+
+INTERVAL = 5
+
 
 def getLatestBlock():
     '''
@@ -29,7 +47,7 @@ def getLatestBlock():
     :return:
     '''
 
-    URL = 'http://localhost:43250/nxt?' +\
+    URL = 'http://localhost:'+PORT+'/nxt?' +\
   'requestType=getBlockchainStatus'
 
     r = requests.post(url=URL)
@@ -37,7 +55,7 @@ def getLatestBlock():
     blockId = data['lastBlock']
     print 'Latest Block:', blockId
 
-    URL = 'http://localhost:43250/nxt?' + \
+    URL = 'http://localhost:'+PORT+'/nxt?' + \
           'requestType=getBlock&block=' + blockId
 
     r = requests.post(url=URL)
@@ -56,7 +74,7 @@ def getTxInfo(txId):
     '''
 
     try:
-        URL = 'http://localhost:48250/nxt?' +\
+        URL = 'http://localhost:'+PORT+'/nxt?' +\
       'requestType=getTransaction&' +\
       'transaction=' + txId
 
@@ -70,7 +88,7 @@ def getTxInfo(txId):
 
 def getAccountBalance(account):
 
-    URL = 'http://localhost:43250/nxt?' +\
+    URL = 'http://localhost:'+PORT+'/nxt?' +\
     'requestType=getAccount&' +\
     'account=' + account
 
@@ -80,7 +98,7 @@ def getAccountBalance(account):
     return data['unconfirmedBalanceNQT']
 
 def sendMoney(recipient, amount, password):
-    URL = "http://localhost:43250/nxt?" +\
+    URL = 'http://localhost:'+PORT+'/nxt?' +\
       'requestType=sendMoney&' +\
       'secretPhrase=' + password +'&'+\
       'recipient=' + recipient + '&' +\
@@ -99,15 +117,17 @@ def sendTx(recipient, sender):
     balance = getAccountBalance(ACCOUNTS[sender][0])
     print ACCOUNTS[sender][0], 'unconf balance:', balance
 
-    amountToSend = int(random.random() * float(balance))
+    amountToSend = int(random.random() * int(balance))
+
+
     if amountToSend < 1:
         amountToSend = 1
     sendMoney(ACCOUNTS[recipient][0], str(amountToSend), ACCOUNTS[sender][1])
 
-    print ACCOUNTS[sender][0], 'sent', amountToSend, 'to', ACCOUNTS[recipient][0], '.'
+    print ACCOUNTS[sender][0], 'sent', str(amountToSend), 'to', ACCOUNTS[recipient][0], '.'
 
 def startForging(acct):
-    URL = "http://localhost:43250/nxt?" +\
+    URL = 'http://localhost:'+PORT+'/nxt?' +\
       'requestType=startForging&' +\
       'secretPhrase=' + ACCOUNTS[acct][1]
 
@@ -117,7 +137,7 @@ def startForging(acct):
     print ACCOUNTS[acct][0], 'started forging.'
 
 def stopForging(acct):
-    URL = "http://localhost:43250/nxt?" +\
+    URL = 'http://localhost:'+PORT+'/nxt?' +\
       'requestType=stopForging&' +\
       'secretPhrase=' + ACCOUNTS[acct][1]
 
@@ -127,7 +147,7 @@ def stopForging(acct):
     print ACCOUNTS[acct][0], 'stopped forging.'
 
 def getForging(password):
-    URL = "http://localhost:43250/nxt?" + \
+    URL = 'http://localhost:'+PORT+'/nxt?' + \
           'requestType=getForging&' + \
           'secretPhrase=' + password
 
@@ -150,13 +170,13 @@ def getForgers():
 
 def main():
     # accts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
+    notConnectedFlag = False
     forgingAccts = []
-    nonForgingAccts = [0,1,2] # change for each node
+    nonForgingAccts = [15,16,17,18,19] # change for each node
 
     while (True):
+        time.sleep(INTERVAL)
         try:
-            print
             action = random.randint(0,2) #inclusive 0 and 2
 
             if (action == 0): # start forging
@@ -174,19 +194,34 @@ def main():
                 forgingAccts.remove(acctNum)
 
             elif (action == 2): # send Money
-                sender = random.randint(0, 9)
-                recipient = random.randint(0, 9)
+                sender = random.randint(0, len(ACCOUNTS)-1)
+                recipient = random.randint(0, len(ACCOUNTS)-1)
                 while (sender == recipient):
-                    recipient = random.randint(0, 9)
+                    recipient = random.randint(0, len(ACCOUNTS)-1)
 
                 sendTx(recipient=recipient, sender=sender)
 
             print 'Forging', forgingAccts
             print 'Non-forging', nonForgingAccts
+            print 'Timestamp:', time.strftime("%Y-%b-%d %H:%M:%S")
+            print
 
         except Exception as e:
-            print e
-            continue
+            if 'Connection refused' in str(e):
+                if notConnectedFlag:
+                    continue
+                else:
+                    print e
+                    print 'Timestamp:', time.strftime("%Y-%b-%d %H:%M:%S")
+                    print
+                    notConnectedFlag=True
+
+            else:
+                print e
+                print 'Timestamp:', time.strftime("%Y-%b-%d %H:%M:%S")
+                notConnectedFlag=False
+                print
+                continue
 
 
 
